@@ -485,10 +485,10 @@ export function syncSettingsUI(prefs) {
     chip.classList.toggle('selected', chip.dataset.occasion === prefs.occasion);
   });
 
-  // Time inputs
-  const startInput = document.getElementById('time-start');
-  const endInput = document.getElementById('time-end');
-  if (prefs.timeStart) startInput.value = prefs.timeStart;
-  if (prefs.timeEnd) endInput.value = prefs.timeEnd;
+  // Time presets
+  const activePreset = prefs.timePreset || 'all-day';
+  document.querySelectorAll('#time-presets .chip').forEach(chip => {
+    chip.classList.toggle('selected', chip.dataset.preset === activePreset);
+  });
 }
 

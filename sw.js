@@ -1,5 +1,5 @@
-// ClimaStyle Service Worker v1.2
-const CACHE_VERSION = 'climastyle-v1.2';
+// ClimaStyle Service Worker v1.3
+const CACHE_VERSION = 'climastyle-v1.3';
 const API_CACHE = 'climastyle-api-v1';
 
 const STATIC_ASSETS = [

@@ -15,8 +15,7 @@ const DEFAULT_PREFS = {
   unit: 'celsius',        // 'celsius' | 'fahrenheit'
   gender: 'masculino',    // 'masculino' | 'femenino' | 'neutro'
   timePreset: 'all-day',
-  occasion: 'trabajo',     // 'trabajo' | 'estudio' | 'salida' | 'especial'
-  styles: ['casual']
+  occasion: 'trabajo'     // 'trabajo' | 'estudio' | 'especial'
 };
 
 // ── Preferences ──

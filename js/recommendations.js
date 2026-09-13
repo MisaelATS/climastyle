@@ -20,7 +20,7 @@
  * @property {string} summary
  * @property {Object} conditions - { tempMin, tempMax, feelsMin, hasRain, hasStrongWind, maxUV, hasNightHours, thermalAmplitude }
  */
-export function getRecommendation(hourlyRange, occasion = 'trabajo', gender = 'masculino', styles = []) {
+export function getRecommendation(hourlyRange, occasion = 'trabajo', gender = 'masculino') {
   if (!hourlyRange || hourlyRange.length === 0) {
     return getDefaultRecommendation();
   }
@@ -30,9 +30,9 @@ export function getRecommendation(hourlyRange, occasion = 'trabajo', gender = 'm
   const tempCategory = getTempCategory(conditions.feelsMin);
 
   // ── Build outfit ──
-  const outfit = buildOutfit(tempCategory, occasion, gender, conditions, styles);
+  const outfit = buildOutfit(tempCategory, occasion, gender, conditions);
   const accessories = buildAccessories(conditions, occasion);
-  const tips = buildTips(conditions, occasion, styles);
+  const tips = buildTips(conditions, occasion);
 
   // ── Summary ──
   const summary = buildSummary(conditions);
@@ -451,7 +451,7 @@ const OUTFITS = {
 // Build Functions
 // ════════════════════════════════════════
 
-function buildOutfit(tempCategory, occasion, gender, conditions, styles = []) {
+function buildOutfit(tempCategory, occasion, gender, conditions) {
   // Use 'neutro' → fallback to 'masculino' outfits with neutral labels
   const effectiveGender = gender === 'neutro' ? 'masculino' : gender;
   const occasionData = OUTFITS[occasion] ?? OUTFITS.estudio;
@@ -470,26 +470,6 @@ function buildOutfit(tempCategory, occasion, gender, conditions, styles = []) {
         .replace(/^Polera /g, 'Polera ')
     }));
   }
-
-  // Style Modifiers
-  outfit = outfit.map(item => {
-    let newItem = { ...item };
-    
-    if (styles.includes('deportivo') && (item.type.includes('Calzado') || item.type.includes('Pantalón') || item.type.includes('Parte inferior'))) {
-      if (item.type.includes('Calzado')) newItem.detail = 'Zapatillas deportivas ' + newItem.detail.toLowerCase();
-      if (item.type.includes('Pantalón') || item.type.includes('Parte inferior')) newItem.detail += ' (o jogger cómodo)';
-    }
-    
-    if (styles.includes('minimalista')) {
-      newItem.detail = 'Tonos neutros (blanco, negro, gris). ' + newItem.detail;
-    }
-    
-    if (styles.includes('streetwear') && (item.type.includes('Polera') || item.type.includes('Parte superior') || item.type.includes('Capa'))) {
-      newItem.description = 'Oversize ' + newItem.description.toLowerCase();
-    }
-    
-    return newItem;
-  });
 
   // Rain modifier: swap to waterproof footwear
   if (conditions.hasRain) {
@@ -587,7 +567,7 @@ function buildAccessories(conditions, occasion) {
   return accessories;
 }
 
-function buildTips(conditions, occasion, styles = []) {
+function buildTips(conditions, occasion) {
   const tips = [];
 
   // Thermal amplitude

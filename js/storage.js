@@ -14,8 +14,7 @@ const KEYS = {
 const DEFAULT_PREFS = {
   unit: 'celsius',        // 'celsius' | 'fahrenheit'
   gender: 'masculino',    // 'masculino' | 'femenino' | 'neutro'
-  timeStart: '08:00',
-  timeEnd: '18:00',
+  timePreset: 'all-day',
   occasion: 'trabajo',     // 'trabajo' | 'estudio' | 'salida' | 'especial'
   styles: ['casual']
 };
@@ -150,3 +149,4 @@ export function setLastCity(city) {
     console.warn('Error saving last city:', e);
   }
 }
+

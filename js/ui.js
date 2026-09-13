@@ -228,15 +228,13 @@ export function renderRecommendation(rec, unit = 'celsius') {
   }
 
   // Outfit
-  html += '<p class="rec-outfit-title">🧥 Tu outfit</p>';
   html += '<div class="rec-outfit-list">';
   outfit.forEach(item => {
     html += `
       <div class="rec-outfit-item">
         <span class="item-emoji">${item.emoji}</span>
         <div class="item-text">
-          <span class="item-type">${escapeHtml(item.type)}: ${escapeHtml(item.description)}</span>
-          <span class="item-detail">${escapeHtml(item.detail)}</span>
+          <span class="item-type">${escapeHtml(item.description)}</span>
         </div>
       </div>
     `;
@@ -245,7 +243,7 @@ export function renderRecommendation(rec, unit = 'celsius') {
 
   // Accessories
   if (accessories.length > 0) {
-    html += '<p class="rec-outfit-title">🎒 Accesorios</p>';
+    html += '<p class="rec-outfit-title">🎒 Accesorios extra</p>';
     html += '<div class="rec-outfit-list">';
     accessories.forEach(item => {
       html += `
@@ -253,7 +251,6 @@ export function renderRecommendation(rec, unit = 'celsius') {
           <span class="item-emoji">${item.emoji}</span>
           <div class="item-text">
             <span class="item-type">${escapeHtml(item.description)}</span>
-            <span class="item-detail">${escapeHtml(item.detail)}</span>
           </div>
         </div>
       `;

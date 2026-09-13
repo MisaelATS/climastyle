@@ -94,18 +94,25 @@ async function loadInitialWeather() {
   }
 }
 
+function getPresetHours() {
+  const activeChip = document.querySelector('#time-presets .chip.selected') 
+    || document.querySelector('#time-presets .chip');
+  return {
+    startH: parseInt(activeChip.dataset.start, 10),
+    endH: parseInt(activeChip.dataset.end, 10)
+  };
+}
+
 async function loadWeather(lat, lon, forceRefresh = false) {
   try {
     state.weatherData = await fetchWeather(lat, lon, forceRefresh);
 
     // Render all components
     renderCurrentWeather(state.weatherData, state.prefs.unit);
-
     renderDaySelector(state.weatherData.daily, state.selectedDate, handleDaySelect, state.prefs.unit);
 
     const dayHourly = getHourlyForDate(state.weatherData, state.selectedDate);
-    const startH = parseTimeToHour(state.prefs.timeStart);
-    const endH = parseTimeToHour(state.prefs.timeEnd);
+    const { startH, endH } = getPresetHours();
     renderTimeline(dayHourly, state.selectedDate, state.prefs.unit, startH, endH);
 
     renderForecast(state.weatherData.daily, state.prefs.unit);
@@ -115,6 +122,9 @@ async function loadWeather(lat, lon, forceRefresh = false) {
     }
 
     hideLoading();
+    
+    // Auto-generate outfit!
+    generateRecommendation();
   } catch (error) {
     hideLoading();
     showToast('Error al cargar el clima: ' + error.message);
@@ -124,7 +134,7 @@ async function loadWeather(lat, lon, forceRefresh = false) {
 function handleDaySelect(dateStr) {
   state.selectedDate = dateStr;
   updateTimelineHighlight();
-  hideRecommendation(); // Hide current recommendation as it belongs to the old date
+  generateRecommendation(); // Auto-update outfit when day changes
 }
 
 // ════════════════════════════════════════
@@ -173,29 +183,25 @@ function bindEvents() {
     debouncedSearch(e.target.value);
   });
 
+  // ── Time Presets chips ──
+  document.querySelectorAll('#time-presets .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#time-presets .chip').forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      state.prefs = savePreferences({ timePreset: chip.dataset.preset });
+      updateTimelineHighlight();
+      generateRecommendation();
+    });
+  });
+
   // ── Occasion chips ──
   document.querySelectorAll('#occasion-chips .chip').forEach(chip => {
     chip.addEventListener('click', () => {
       document.querySelectorAll('#occasion-chips .chip').forEach(c => c.classList.remove('selected'));
       chip.classList.add('selected');
       state.prefs = savePreferences({ occasion: chip.dataset.occasion });
+      generateRecommendation();
     });
-  });
-
-  // ── Recommend button ──
-  document.getElementById('btn-recommend').addEventListener('click', () => {
-    generateRecommendation();
-  });
-
-  // ── Time inputs ──
-  document.getElementById('time-start').addEventListener('change', (e) => {
-    state.prefs = savePreferences({ timeStart: e.target.value });
-    updateTimelineHighlight();
-  });
-
-  document.getElementById('time-end').addEventListener('change', (e) => {
-    state.prefs = savePreferences({ timeEnd: e.target.value });
-    updateTimelineHighlight();
   });
 
   // ── Settings: Style chips (Multi-select) ──
@@ -297,13 +303,9 @@ function handleRemoveSavedCity(city) {
 // ════════════════════════════════════════
 
 function generateRecommendation() {
-  if (!state.weatherData) {
-    showToast('Espera a que cargue el clima');
-    return;
-  }
+  if (!state.weatherData) return;
 
-  const startHour = parseTimeToHour(state.prefs.timeStart);
-  const endHour = parseTimeToHour(state.prefs.timeEnd);
+  const { startH: startHour, endH: endHour } = getPresetHours();
   const occasion = state.prefs.occasion;
   const gender = state.prefs.gender;
   const styles = state.prefs.styles || [];
@@ -327,8 +329,7 @@ function generateRecommendation() {
 function updateTimelineHighlight() {
   if (!state.weatherData) return;
   const dayHourly = getHourlyForDate(state.weatherData, state.selectedDate);
-  const startH = parseTimeToHour(state.prefs.timeStart);
-  const endH = parseTimeToHour(state.prefs.timeEnd);
+  const { startH, endH } = getPresetHours();
   renderTimeline(dayHourly, state.selectedDate, state.prefs.unit, startH, endH);
 }
 

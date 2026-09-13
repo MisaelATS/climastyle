@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="ClimaStyle — Clima y recomendaciones de ropa inteligentes para tu día">
+  <meta http-equiv="Content-Security-Policy" 
+        content="default-src 'self'; connect-src 'self' https://api.open-meteo.com https://geocoding-api.open-meteo.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self'">
+
+  <title>ClimaStyle</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="favicon.svg">
+
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- ========== LOADING SCREEN ========== -->
+    <div id="loading-screen" class="loading-screen">
+      <div class="loading-content">
+        <div class="loading-icon">⛅</div>
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Obteniendo clima...</p>
+      </div>
+    </div>
+
+    <!-- ========== VIEW: HOME ========== -->
+    <main id="view-home" class="view active">
+
+      <!-- Header -->
+      <header class="app-header">
+        <button id="btn-location" class="header-location" aria-label="Cambiar ubicación">
+          <span class="loc-icon">📍</span>
+          <span id="city-name" class="city-name">Cargando...</span>
+          <span class="loc-chevron">▾</span>
+        </button>
+        <button id="btn-refresh" class="icon-btn" aria-label="Actualizar clima" title="Actualizar">
+          <span>🔄</span>
+        </button>
+      </header>
+
+      <!-- Current Weather -->
+      <section id="current-weather" class="card weather-card">
+        <div class="weather-main">
+          <span id="current-icon" class="weather-emoji">--</span>
+          <div class="weather-temp-group">
+            <span id="current-temp" class="temp-big">--°</span>
+            <span id="current-desc" class="temp-desc">Cargando...</span>
+          </div>
+        </div>
+        <div class="weather-minmax">
+          <span>🔺 <span id="today-max">--°</span></span>
+          <span>🔻 <span id="today-min">--°</span></span>
+        </div>
+        <div id="weather-details" class="weather-details">
+          <div class="detail">
+            <span class="detail-icon">🌡️</span>
+            <span class="detail-label">Sensación</span>
+            <span id="detail-feels" class="detail-val">--°</span>
+          </div>
+          <div class="detail">
+            <span class="detail-icon">💧</span>
+            <span class="detail-label">Humedad</span>
+            <span id="detail-humidity" class="detail-val">--%</span>
+          </div>
+          <div class="detail">
+            <span class="detail-icon">💨</span>
+            <span class="detail-label">Viento</span>
+            <span id="detail-wind" class="detail-val">--</span>
+          </div>
+          <div class="detail">
+            <span class="detail-icon">☀️</span>
+            <span class="detail-label">UV</span>
+            <span id="detail-uv" class="detail-val">--</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Outfit Planner -->
+      <section id="planner" class="card planner-card">
+        <h2 class="section-title">👔 Planifica tu outfit</h2>
+
+        <!-- Day Selector (7 days) -->
+        <div id="day-selector" class="day-selector">
+          <!-- Filled dynamically by ui.js -->
+        </div>
+
+        <div class="time-range">
+          <div class="time-group">
+            <label for="time-start" class="time-label">🚪 Salida</label>
+            <input type="time" id="time-start" class="time-input" value="08:00">
+          </div>
+          <span class="time-arrow">→</span>
+          <div class="time-group">
+            <label for="time-end" class="time-label">🏠 Regreso</label>
+            <input type="time" id="time-end" class="time-input" value="18:00">
+          </div>
+        </div>
+
+        <div id="occasion-chips" class="chips">
+          <button class="chip selected" data-occasion="trabajo">🏢 Trabajo</button>
+          <button class="chip" data-occasion="estudio">📚 Estudios</button>
+          <button class="chip" data-occasion="salida">🎉 Salida</button>
+          <button class="chip" data-occasion="especial">✨ Especial</button>
+        </div>
+
+        <button id="btn-recommend" class="btn-primary">
+          Ver Recomendación
+        </button>
+      </section>
+
+      <!-- Recommendation Result -->
+      <section id="recommendation-result" class="card rec-card hidden">
+        <div id="rec-content">
+          <!-- Filled dynamically by ui.js -->
+        </div>
+      </section>
+
+      <!-- Hourly Timeline -->
+      <section class="timeline-section">
+        <h2 id="timeline-title" class="section-title">⏰ Próximas horas</h2>
+        <div id="hourly-timeline" class="timeline-scroll">
+          <!-- Filled dynamically by ui.js -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ========== VIEW: 7-DAY FORECAST ========== -->
+    <main id="view-forecast" class="view">
+      <header class="app-header">
+        <h1 class="view-title">📅 Pronóstico 7 días</h1>
+      </header>
+      <div id="forecast-list" class="forecast-list">
+        <!-- Filled dynamically by ui.js -->
+      </div>
+    </main>
+
+    <!-- ========== VIEW: SETTINGS ========== -->
+    <main id="view-settings" class="view">
+      <header class="app-header">
+        <h1 class="view-title">⚙️ Configuración</h1>
+      </header>
+      <div class="settings-container">
+
+        <div class="setting-group">
+          <label class="setting-label">Tus Estilos Favoritos (Multiselección)</label>
+          <div id="style-chips" class="chips">
+            <button class="chip" data-style="casual">Casual</button>
+            <button class="chip" data-style="deportivo">Deportivo</button>
+            <button class="chip" data-style="streetwear">Streetwear</button>
+            <button class="chip" data-style="minimalista">Minimalista</button>
+            <button class="chip" data-style="elegante">Elegante/Formal</button>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label">Género de ropa</label>
+          <div id="gender-chips" class="chips">
+            <button class="chip selected" data-gender="masculino">👔 Masculino</button>
+            <button class="chip" data-gender="femenino">👗 Femenino</button>
+            <button class="chip" data-gender="neutro">🧥 Neutro</button>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label">Unidades</label>
+          <div id="unit-chips" class="chips">
+            <button class="chip selected" data-unit="celsius">°C Celsius</button>
+            <button class="chip" data-unit="fahrenheit">°F Fahrenheit</button>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label">Ciudades guardadas</label>
+          <div id="saved-cities-list" class="saved-cities">
+            <p class="empty-msg">Sin ciudades guardadas</p>
+          </div>
+        </div>
+
+        <div class="setting-group about-section">
+          <p class="about-line"><strong>ClimaStyle</strong> v1.0</p>
+          <p class="about-line muted">Datos meteorológicos: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a></p>
+          <p class="about-line muted">Sin tracking · Sin cookies · 100% privado</p>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- ========== MODAL: CITY SEARCH ========== -->
+    <div id="modal-search" class="modal hidden" role="dialog" aria-label="Buscar ciudad">
+      <div class="modal-backdrop" id="modal-backdrop"></div>
+      <div class="modal-panel">
+        <div class="modal-header">
+          <h2 class="modal-title">📍 Buscar ciudad</h2>
+          <button id="btn-close-modal" class="icon-btn" aria-label="Cerrar">✕</button>
+        </div>
+        <input type="search" id="search-input" class="search-input"
+               placeholder="Ej: Santiago, Valparaíso, Lima..."
+               autocomplete="off" autocorrect="off" spellcheck="false">
+        <div id="search-results" class="search-results">
+          <!-- Filled dynamically -->
+        </div>
+        <div id="modal-saved" class="modal-saved-section">
+          <h3 class="mini-heading">⭐ Guardadas</h3>
+          <div id="modal-saved-list" class="search-results">
+            <!-- Filled dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== TOAST NOTIFICATION ========== -->
+    <div id="toast" class="toast hidden" role="alert" aria-live="polite">
+      <span id="toast-msg"></span>
+    </div>
+
+    <!-- ========== BOTTOM NAVIGATION ========== -->
+    <nav id="bottom-nav" class="bottom-nav" aria-label="Navegación principal">
+      <button class="nav-btn active" data-view="home" aria-label="Inicio">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Inicio</span>
+      </button>
+      <button class="nav-btn" data-view="forecast" aria-label="Pronóstico">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">7 Días</span>
+      </button>
+      <button class="nav-btn" data-view="settings" aria-label="Configuración">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">Config</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- App Entry Point -->
+  <script type="module" src="js/app.js"></script>
+
+  <!-- Register Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('SW registered:', reg.scope))
+          .catch(err => console.warn('SW registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>
+

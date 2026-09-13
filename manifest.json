@@ -1,0 +1,22 @@
+{
+  "name": "ClimaStyle — Clima y Recomendaciones",
+  "short_name": "ClimaStyle",
+  "description": "Clima y recomendaciones de ropa inteligentes para tu día",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "lang": "es",
+  "categories": ["weather", "lifestyle"],
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
+

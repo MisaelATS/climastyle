@@ -1,0 +1,223 @@
+/* ═══════════════════════════════════════════
+   ClimaStyle — Design System & Base Styles
+   Dark blue theme, minimalist, easy on eyes
+   ═══════════════════════════════════════════ */
+
+/* ── CSS Custom Properties ── */
+:root {
+  /* Background */
+  --bg-primary: #0f172a;
+  --bg-card: #1e293b;
+  --bg-card-hover: #283a50;
+  --bg-elevated: #334155;
+
+  /* Accent */
+  --accent: #38bdf8;
+  --accent-dim: #0c4a6e;
+  --accent-glow: rgba(56, 189, 248, 0.15);
+
+  /* Text */
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  /* Semantic */
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --info: #60a5fa;
+
+  /* Temperature */
+  --temp-cold: #60a5fa;
+  --temp-cool: #38bdf8;
+  --temp-mild: #4ade80;
+  --temp-warm: #fbbf24;
+  --temp-hot: #f87171;
+
+  /* Borders & Surfaces */
+  --border: #334155;
+  --border-light: #475569;
+  --shadow: rgba(0, 0, 0, 0.3);
+
+  /* Sizing */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --nav-height: 64px;
+  --header-height: 56px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms ease;
+}
+
+/* ── Reset ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input {
+  font: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+  outline: none;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ── App Container ── */
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  position: relative;
+  padding-bottom: var(--nav-height);
+}
+
+/* ── Views ── */
+.view {
+  display: none;
+  padding: 0 16px 24px;
+  min-height: calc(100dvh - var(--nav-height));
+}
+
+.view.active {
+  display: block;
+}
+
+/* ── Typography ── */
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.view-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.mini-heading {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+/* ── Cards ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+/* ── Scrollbar (thin, themed) ── */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-light);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* ── Selection ── */
+::selection {
+  background: var(--accent);
+  color: var(--bg-primary);
+}
+
+/* ── Focus Ring ── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── Safe area padding (notch devices) ── */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .app-header {
+    padding-top: env(safe-area-inset-top);
+  }
+  .bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ── Desktop: center + subtle border ── */
+@media (min-width: 520px) {
+  #app {
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+}
+

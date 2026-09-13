@@ -40,41 +40,41 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadInitialWeather();
 });
 
+async function fetchGPSLocation() {
+  try {
+    const pos = await getCurrentPosition();
+    state.currentCity = {
+      name: '📍 Ubicación Actual',
+      lat: pos.lat,
+      lon: pos.lon,
+      country: '',
+      region: '',
+      countryCode: ''
+    };
+    renderCityName(state.currentCity);
+    await loadWeather(pos.lat, pos.lon, true);
+    return true; // Success
+  } catch (gpsError) {
+    return false; // Failed
+  }
+}
+
 async function loadInitialWeather() {
   showLoading();
 
   try {
-    // Try last used city first
-    const lastCity = getLastCity();
-
-    if (lastCity) {
-      state.currentCity = lastCity;
-      renderCityName(lastCity);
-      await loadWeather(lastCity.lat, lastCity.lon);
-    } else {
-      // Try GPS
-      try {
-        const pos = await getCurrentPosition();
-        // Reverse geocode: use the coordinates as city
-        state.currentCity = {
-          name: 'Mi ubicación',
-          lat: pos.lat,
-          lon: pos.lon,
-          country: '',
-          region: '',
-          countryCode: ''
-        };
-        renderCityName(state.currentCity);
-        await loadWeather(pos.lat, pos.lon);
-
-        // Try to get actual city name via search
-        try {
-          const results = await searchCities(`${pos.lat},${pos.lon}`);
-          // This won't work well, but we keep the coords
-        } catch (e) { /* ignore */ }
-
-      } catch (gpsError) {
-        // GPS failed, default to Santiago, Chile
+    // Priority: Always try GPS first on load
+    const success = await fetchGPSLocation();
+    
+    if (!success) {
+      // Fallback: Last City or Default (Santiago)
+      const lastCity = getLastCity();
+      if (lastCity) {
+        state.currentCity = lastCity;
+        renderCityName(lastCity);
+        showToast('GPS denegado. Mostrando última ciudad.');
+        await loadWeather(lastCity.lat, lastCity.lon);
+      } else {
         state.currentCity = {
           name: 'Santiago',
           lat: -33.4489,
@@ -84,7 +84,7 @@ async function loadInitialWeather() {
           countryCode: 'CL'
         };
         renderCityName(state.currentCity);
-        showToast(gpsError.message || 'Usando Santiago como ubicación por defecto');
+        showToast('Ubicación denegada. Mostrando Santiago por defecto.');
         await loadWeather(-33.4489, -70.6693);
       }
     }
@@ -151,12 +151,21 @@ function bindEvents() {
 
   // ── Refresh ──
   document.getElementById('btn-refresh').addEventListener('click', async () => {
-    if (!state.currentCity) return;
     const btn = document.getElementById('btn-refresh');
     btn.querySelector('span').classList.add('refreshing');
-    await loadWeather(state.currentCity.lat, state.currentCity.lon, true);
+    
+    const success = await fetchGPSLocation();
+    
+    if (success) {
+      showToast('✅ Ubicación actualizada');
+    } else {
+      if (state.currentCity) {
+        await loadWeather(state.currentCity.lat, state.currentCity.lon, true);
+        showToast('⚠️ Sin GPS, actualizando ciudad actual');
+      }
+    }
+    
     btn.querySelector('span').classList.remove('refreshing');
-    showToast('✅ Clima actualizado');
   });
 
   // ── Location button → open modal ──
@@ -308,7 +317,6 @@ function generateRecommendation() {
   const { startH: startHour, endH: endHour } = getPresetHours();
   const occasion = state.prefs.occasion;
   const gender = state.prefs.gender;
-  const styles = state.prefs.styles || [];
 
   // Get weather data for the selected time range
   const hourlyRange = getHourlyRangeForDate(state.weatherData, state.selectedDate, startHour, endHour);
@@ -318,7 +326,7 @@ function generateRecommendation() {
     return;
   }
 
-  const rec = getRecommendation(hourlyRange, occasion, gender, styles);
+  const rec = getRecommendation(hourlyRange, occasion, gender);
   renderRecommendation(rec, state.prefs.unit);
 }
 

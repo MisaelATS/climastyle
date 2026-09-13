@@ -20,7 +20,6 @@
  * @property {string} summary
  * @property {Object} conditions - { tempMin, tempMax, feelsMin, hasRain, hasStrongWind, maxUV, hasNightHours, thermalAmplitude }
  */
-export function getRecommendation(hourlyRange, occasion = 'trabajo', gender = 'masculino') {
 export function getRecommendation(hourlyRange, occasion = 'trabajo', gender = 'masculino', styles = []) {
   if (!hourlyRange || hourlyRange.length === 0) {
     return getDefaultRecommendation();
@@ -31,10 +30,8 @@ export function getRecommendation(hourlyRange, occasion = 'trabajo', gender = 'm
   const tempCategory = getTempCategory(conditions.feelsMin);
 
   // ── Build outfit ──
-  const outfit = buildOutfit(tempCategory, occasion, gender, conditions);
   const outfit = buildOutfit(tempCategory, occasion, gender, conditions, styles);
   const accessories = buildAccessories(conditions, occasion);
-  const tips = buildTips(conditions, occasion);
   const tips = buildTips(conditions, occasion, styles);
 
   // ── Summary ──
@@ -454,7 +451,6 @@ const OUTFITS = {
 // Build Functions
 // ════════════════════════════════════════
 
-function buildOutfit(tempCategory, occasion, gender, conditions) {
 function buildOutfit(tempCategory, occasion, gender, conditions, styles = []) {
   // Use 'neutro' → fallback to 'masculino' outfits with neutral labels
   const effectiveGender = gender === 'neutro' ? 'masculino' : gender;
@@ -591,7 +587,6 @@ function buildAccessories(conditions, occasion) {
   return accessories;
 }
 
-function buildTips(conditions, occasion) {
 function buildTips(conditions, occasion, styles = []) {
   const tips = [];
 

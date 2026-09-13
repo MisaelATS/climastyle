@@ -86,41 +86,34 @@
 
       <!-- Outfit Planner -->
       <section id="planner" class="card planner-card">
-        <h2 class="section-title">👔 Planifica tu outfit</h2>
+        <h2 class="section-title">👔 Tu Outfit</h2>
 
         <!-- Day Selector (7 days) -->
         <div id="day-selector" class="day-selector">
           <!-- Filled dynamically by ui.js -->
         </div>
 
-        <div class="time-range">
-          <div class="time-group">
-            <label for="time-start" class="time-label">🚪 Salida</label>
-            <input type="time" id="time-start" class="time-input" value="08:00">
-          </div>
-          <span class="time-arrow">→</span>
-          <div class="time-group">
-            <label for="time-end" class="time-label">🏠 Regreso</label>
-            <input type="time" id="time-end" class="time-input" value="18:00">
+        <div class="time-presets" id="time-presets" style="margin-bottom: 15px;">
+          <div class="chips">
+            <button class="chip selected" data-preset="all-day" data-start="07" data-end="21">Todo el día</button>
+            <button class="chip" data-preset="morning" data-start="07" data-end="13">Mañana</button>
+            <button class="chip" data-preset="afternoon" data-start="13" data-end="19">Tarde</button>
+            <button class="chip" data-preset="night" data-start="19" data-end="23">Noche</button>
           </div>
         </div>
 
-        <div id="occasion-chips" class="chips">
-          <button class="chip selected" data-occasion="trabajo">🏢 Trabajo</button>
-          <button class="chip" data-occasion="estudio">📚 Estudios</button>
-          <button class="chip" data-occasion="salida">🎉 Salida</button>
-          <button class="chip" data-occasion="especial">✨ Especial</button>
+        <div class="chips" id="occasion-chips" style="margin-bottom: 15px;">
+          <button class="chip selected" data-occasion="trabajo">Trabajo</button>
+          <button class="chip" data-occasion="estudio">Estudio</button>
+          <button class="chip" data-occasion="salida">Salida Casual</button>
+          <button class="chip" data-occasion="especial">Especial</button>
         </div>
 
-        <button id="btn-recommend" class="btn-primary">
-          Ver Recomendación
-        </button>
-      </section>
-
-      <!-- Recommendation Result -->
-      <section id="recommendation-result" class="card rec-card hidden">
-        <div id="rec-content">
-          <!-- Filled dynamically by ui.js -->
+        <!-- Recommendation displays immediately here -->
+        <div id="recommendation-result" class="recommendation-result hidden">
+          <div id="rec-content">
+            <!-- Filled dynamically by ui.js -->
+          </div>
         </div>
       </section>
 

@@ -44,7 +44,7 @@ async function fetchGPSLocation() {
   try {
     const pos = await getCurrentPosition();
     state.currentCity = {
-      name: '📍 Ubicación Actual',
+      name: 'Ubicación Actual',
       lat: pos.lat,
       lon: pos.lon,
       country: '',

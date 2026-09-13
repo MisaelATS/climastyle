@@ -84,9 +84,17 @@
         </div>
       </section>
 
-      <!-- Outfit Planner -->
+      <!-- Hourly Timeline (Moved UP to prioritize weather) -->
+      <section class="timeline-section">
+        <h2 id="timeline-title" class="section-title">⏰ Próximas horas</h2>
+        <div id="hourly-timeline" class="timeline-scroll">
+          <!-- Filled dynamically by ui.js -->
+        </div>
+      </section>
+
+      <!-- Outfit Planner (Moved DOWN) -->
       <section id="planner" class="card planner-card">
-        <h2 class="section-title">👔 Tu Outfit</h2>
+        <h2 class="section-title">👔 Tu Ropa</h2>
 
         <!-- Day Selector (7 days) -->
         <div id="day-selector" class="day-selector">
@@ -95,17 +103,16 @@
 
         <div class="time-presets" id="time-presets" style="margin-bottom: 15px;">
           <div class="chips">
-            <button class="chip selected" data-preset="all-day" data-start="07" data-end="21">Todo el día</button>
-            <button class="chip" data-preset="morning" data-start="07" data-end="13">Mañana</button>
-            <button class="chip" data-preset="afternoon" data-start="13" data-end="19">Tarde</button>
-            <button class="chip" data-preset="night" data-start="19" data-end="23">Noche</button>
+            <button class="chip selected" data-preset="all-day" data-start="07" data-end="21">Todo el día (07-21h)</button>
+            <button class="chip" data-preset="morning" data-start="07" data-end="13">Mañana (07-13h)</button>
+            <button class="chip" data-preset="afternoon" data-start="13" data-end="19">Tarde (13-19h)</button>
+            <button class="chip" data-preset="night" data-start="19" data-end="23">Noche (19-23h)</button>
           </div>
         </div>
 
         <div class="chips" id="occasion-chips" style="margin-bottom: 15px;">
           <button class="chip selected" data-occasion="trabajo">Trabajo</button>
-          <button class="chip" data-occasion="estudio">Estudio</button>
-          <button class="chip" data-occasion="salida">Salida Casual</button>
+          <button class="chip" data-occasion="estudio">Estudios</button>
           <button class="chip" data-occasion="especial">Especial</button>
         </div>
 
@@ -114,14 +121,6 @@
           <div id="rec-content">
             <!-- Filled dynamically by ui.js -->
           </div>
-        </div>
-      </section>
-
-      <!-- Hourly Timeline -->
-      <section class="timeline-section">
-        <h2 id="timeline-title" class="section-title">⏰ Próximas horas</h2>
-        <div id="hourly-timeline" class="timeline-scroll">
-          <!-- Filled dynamically by ui.js -->
         </div>
       </section>
 
@@ -143,17 +142,6 @@
         <h1 class="view-title">⚙️ Configuración</h1>
       </header>
       <div class="settings-container">
-
-        <div class="setting-group">
-          <label class="setting-label">Tus Estilos Favoritos (Multiselección)</label>
-          <div id="style-chips" class="chips">
-            <button class="chip" data-style="casual">Casual</button>
-            <button class="chip" data-style="deportivo">Deportivo</button>
-            <button class="chip" data-style="streetwear">Streetwear</button>
-            <button class="chip" data-style="minimalista">Minimalista</button>
-            <button class="chip" data-style="elegante">Elegante/Formal</button>
-          </div>
-        </div>
 
         <div class="setting-group">
           <label class="setting-label">Género de ropa</label>

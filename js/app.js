@@ -6,7 +6,7 @@
 import { fetchWeather, getHourlyForDate, getHourlyRangeForDate } from './weather-api.js';
 import { getRecommendation } from './recommendations.js';
 import { getCurrentPosition, searchCities } from './geolocation.js';
-import { parseTimeToHour, debounce } from './utils.js';
+import { parseTimeToHour, debounce, getLocalTodayString } from './utils.js';
 import {
   getPreferences, savePreferences,
   getLastCity, setLastCity,
@@ -26,7 +26,7 @@ let state = {
   weatherData: null,
   currentCity: null,
   prefs: getPreferences(),
-  selectedDate: new Date().toISOString().split('T')[0] // Defaults to today
+  selectedDate: getLocalTodayString() // Defaults to local today
 };
 
 // ════════════════════════════════════════

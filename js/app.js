@@ -10,7 +10,7 @@ import {
   getPreferences, savePreferences,
   getLastCity, setLastCity,
   getSavedCities, addSavedCity, removeSavedCity,
-  getCachedWeatherForce
+  getCachedWeather
 } from './storage.js';
 import {
   initUI,
@@ -44,7 +44,7 @@ async function fetchGPSLocation(silent = false) {
   try {
     const pos = await getCurrentPosition();
     state.currentCity = {
-      name: '📍 Ubicación Actual',
+      name: 'Ubicación Actual',
       lat: pos.lat,
       lon: pos.lon,
       country: '',
@@ -56,7 +56,7 @@ async function fetchGPSLocation(silent = false) {
     
     if (silent) {
       state.weatherData = await fetchWeather(pos.lat, pos.lon, true);
-      renderAll();
+      renderAll(false);
     } else {
       await loadWeather(pos.lat, pos.lon, true);
     }
@@ -67,25 +67,24 @@ async function fetchGPSLocation(silent = false) {
 }
 
 async function loadInitialWeather() {
-  const cachedWeather = getCachedWeatherForce();
+  // Verificamos si hay caché de hace menos de 1 hora
+  const validCache = getCachedWeather(60 * 60 * 1000); // 1 hora
   const lastCity = getLastCity();
 
-  // Optimistic Render (Stale-while-revalidate)
-  if (cachedWeather && lastCity) {
+  // Si el clima es reciente, lo mostramos al instante. No hace falta molestar al GPS.
+  if (validCache && lastCity) {
     state.currentCity = lastCity;
-    state.weatherData = cachedWeather;
+    state.weatherData = validCache;
     renderCityName(lastCity);
-    renderAll();
-    
-    // Silently fetch GPS and update data in background
-    fetchGPSLocation(true);
+    renderAll(false);
     return;
   }
 
+  // Si el clima es viejo (más de 1 hora) o es la primera vez, mostramos pantalla de carga
   showLoading();
 
   try {
-    const success = await fetchGPSLocation();
+    const success = await fetchGPSLocation(false);
     
     if (!success) {
       if (lastCity) {
@@ -123,7 +122,7 @@ function getPresetHours() {
   };
 }
 
-function renderAll() {
+function renderAll(autoScroll = false) {
   if (!state.weatherData) return;
   renderCurrentWeather(state.weatherData, state.prefs.unit);
   renderDaySelector(state.weatherData.daily, state.selectedDate, handleDaySelect, state.prefs.unit);
@@ -135,13 +134,13 @@ function renderAll() {
   renderForecast(state.weatherData.daily, state.prefs.unit);
   
   hideLoading();
-  generateRecommendation();
+  generateRecommendation(autoScroll);
 }
 
 async function loadWeather(lat, lon, forceRefresh = false) {
   try {
     state.weatherData = await fetchWeather(lat, lon, forceRefresh);
-    renderAll();
+    renderAll(false);
     
     if (state.weatherData._offline) {
       showToast('📡 Sin conexión. Mostrando datos guardados.');
@@ -155,7 +154,7 @@ async function loadWeather(lat, lon, forceRefresh = false) {
 function handleDaySelect(dateStr) {
   state.selectedDate = dateStr;
   updateTimelineHighlight();
-  generateRecommendation(); 
+  generateRecommendation(true); // User explicitly clicked, so we can scroll
 }
 
 // ════════════════════════════════════════
@@ -220,7 +219,7 @@ function bindEvents() {
       chip.classList.add('selected');
       state.prefs = savePreferences({ timePreset: chip.dataset.preset });
       updateTimelineHighlight();
-      generateRecommendation();
+      generateRecommendation(true); // User explicitly clicked, so scroll
     });
   });
 
@@ -230,7 +229,7 @@ function bindEvents() {
       document.querySelectorAll('#occasion-chips .chip').forEach(c => c.classList.remove('selected'));
       chip.classList.add('selected');
       state.prefs = savePreferences({ occasion: chip.dataset.occasion });
-      generateRecommendation();
+      generateRecommendation(true); // User explicitly clicked, so scroll
     });
   });
 
@@ -252,7 +251,7 @@ function bindEvents() {
       state.prefs = savePreferences({ unit: chip.dataset.unit });
 
       if (state.weatherData) {
-        renderAll();
+        renderAll(false);
       }
 
       showToast(`Unidades: ${chip.textContent.trim()}`);
@@ -307,7 +306,7 @@ function handleRemoveSavedCity(city) {
 // Recommendation & Highlights
 // ════════════════════════════════════════
 
-function generateRecommendation() {
+function generateRecommendation(autoScroll = false) {
   if (!state.weatherData) return;
 
   const { startH: startHour, endH: endHour } = getPresetHours();
@@ -322,7 +321,7 @@ function generateRecommendation() {
   }
 
   const rec = getRecommendation(hourlyRange, occasion, gender);
-  renderRecommendation(rec, state.prefs.unit);
+  renderRecommendation(rec, state.prefs.unit, autoScroll);
 }
 
 function updateTimelineHighlight() {
